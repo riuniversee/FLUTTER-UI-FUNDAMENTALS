@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Basic Widgets - Tahap 5'),
+          title: const Text('Layout Row & Column - Tahap 6'),
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
         ),
@@ -27,55 +27,59 @@ class MyApp extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 1. Image Asset / CircleAvatar Profil
-                const CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/images/profile.jpg'),
-                  // Fallback icon jika gambar belum dipasang/ditemukan
-                  child: Icon(Icons.person, size: 50, color: Colors.white),
-                ),
-                const SizedBox(height: 16),
-
-                // 2. Text Nama & NIM
+                // Identitas Mahasiswa
                 const Text(
                   studentName,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 4),
                 const Text(
                   'NIM: $studentId',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 24),
+
+                // Section Layout Bertingkat: Row berisi beberapa Column
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.shade50,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-                const SizedBox(height: 16),
-
-                // 3. Icon + Text Minat/Activity
-                const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.phone_android, color: Colors.indigo),
-                    SizedBox(width: 8),
-                    Text(
-                      'Mobile Programming Student',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            '8',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
+                          ),
+                          SizedBox(height: 4),
+                          Text('Widget', style: TextStyle(color: Colors.black87)),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // 4. Deskripsi Singkat Minat Pemrograman
-                const Text(
-                  'Tertarik mengembangkan aplikasi mobile modern, WebGIS, dan integrasi API menggunakan Flutter.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: Colors.black87),
+                      Column(
+                        children: [
+                          Text(
+                            '4',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
+                          ),
+                          SizedBox(height: 4),
+                          Text('Layout', style: TextStyle(color: Colors.black87)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            '1',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
+                          ),
+                          SizedBox(height: 4),
+                          Text('State', style: TextStyle(color: Colors.black87)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
