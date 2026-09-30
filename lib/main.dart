@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 // Identitas Wajib Mahasiswa
 const String studentName = 'Kadek Ripa Adi Putra';
@@ -17,118 +19,100 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Informatif List - Tahap 11'),
+          title: const Text('Membaca JSON Statik - Tahap 12'),
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
         ),
-        body: const InformativeTopicListPage(),
+        body: const JsonReaderTestPage(),
       ),
     );
   }
 }
 
-class InformativeTopicListPage extends StatelessWidget {
-  const InformativeTopicListPage({super.key});
+class JsonReaderTestPage extends StatefulWidget {
+  const JsonReaderTestPage({super.key});
+
+  @override
+  State<JsonReaderTestPage> createState() => _JsonReaderTestPageState();
+}
+
+class _JsonReaderTestPageState extends State<JsonReaderTestPage> {
+  String _jsonOutput = 'Menunggu pembacaan file JSON...';
+
+  // Function pembaca JSON statik dari assets
+  Future<Map<String, dynamic>> loadStudentData() async {
+    final String jsonString = await rootBundle.loadString('assets/data/student_data.json');
+    return jsonDecode(jsonString) as Map<String, dynamic>;
+  }
+
+  void _testReadJson() async {
+    try {
+      final data = await loadStudentData();
+      final student = data['student'] as Map<String, dynamic>;
+      final courses = data['courses'] as List<dynamic>;
+
+      setState(() {
+        _jsonOutput = 'Berhasil Membaca JSON!\n\n'
+            'NIM: ${student['nim']}\n'
+            'Nama: ${student['name']}\n'
+            'Jumlah Kursus: ${courses.length} item';
+      });
+    } catch (e) {
+      setState(() {
+        _jsonOutput = 'Gagal membaca JSON: $e';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Collection Data List<Map<String, dynamic>>
-    final List<Map<String, dynamic>> topics = [
-      {'title': 'Git & GitHub', 'subtitle': 'Version control', 'done': true},
-      {'title': 'Dart Fundamentals', 'subtitle': 'Language basics', 'done': true},
-      {'title': 'Flutter UI Fundamentals', 'subtitle': 'Widgets & layout', 'done': false},
-      {'title': '$studentId - $studentName', 'subtitle': 'Pemilik aplikasi', 'done': false},
-    ];
-
-    // Menghitung jumlah topik yang sudah selesai menggunakan where()
-    final int completedCount = topics.where((item) => item['done'] == true).length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Card Ringkasan & Identitas Mahasiswa
-        Card(
-          margin: const EdgeInsets.all(16.0),
-          color: Colors.indigo.shade50,
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      studentName,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    Text(
-                      'NIM: $studentId',
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                // Badge Ringkasan Progress
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.indigo,
-                    borderRadius: BorderRadius.circular(20),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch, // Properti milik Column
+        children: [
+          Card(
+            color: Colors.indigo.shade50,
+            child: const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Text(
+                    studentName,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  child: Text(
-                    '$completedCount dari ${topics.length} Selesai',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
-                ),
-              ],
+                  Text('NIM: $studentId', style: TextStyle(color: Colors.grey)),
+                ],
+              ),
             ),
           ),
-        ),
-
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          child: Text(
-            'Progres Topik Pembelajaran',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: _testReadJson,
+            icon: const Icon(Icons.folder_open),
+            label: const Text('Uji Baca File JSON'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
           ),
-        ),
-
-        // List item dibungkus Card dengan Conditional UI
-        Expanded(
-          child: ListView.builder(
-            itemCount: topics.length,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            itemBuilder: (context, index) {
-              final item = topics[index];
-              final bool isDone = item['done'] == true;
-
-              return Card(
-                margin: const EdgeInsets.only(bottom: 10.0),
-                elevation: 1,
-                child: ListTile(
-                  leading: Icon(
-                    isDone ? Icons.check_circle : Icons.schedule,
-                    color: isDone ? Colors.green : Colors.orange,
-                  ),
-                  title: Text(
-                    item['title'] as String,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(item['subtitle'] as String),
-                  trailing: Text(
-                    isDone ? 'Selesai' : 'Belum',
-                    style: TextStyle(
-                      color: isDone ? Colors.green : Colors.orange,
-                      fontWeight: FontWeight.bold,
-                    ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Text(
+                    _jsonOutput,
+                    style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
                   ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
