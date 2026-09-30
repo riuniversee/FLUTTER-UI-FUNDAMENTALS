@@ -11,89 +11,96 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // Reusable Helper Function untuk membuat Kartu Statistik
+  Widget buildStatCard(String value, String label, IconData icon, Color color) {
+    return Expanded(
+      child: Card(
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 28),
+              const SizedBox(height: 6),
+              Text(
+                value,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Card & Styling - Tahap 7'),
+          title: const Text('Reusable Widget - Tahap 8'),
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Profil Mahasiswa menggunakan Card dan Padding
+              // Identitas Mahasiswa
               Card(
-                elevation: 4,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                color: Colors.indigo.shade50,
                 child: const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Text(
-                        '$studentId - $studentName',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Flutter UI Fundamentals',
-                        style: TextStyle(fontSize: 14, color: Colors.indigo),
+                      Icon(Icons.person, color: Colors.indigo, size: 32),
+                      SizedBox(width: 12),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            studentName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'NIM: $studentId',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // 2. Elemen Ringkasan menggunakan Container + BoxDecoration
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.indigo.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.indigo.shade200),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        Text('8', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                        SizedBox(height: 4),
-                        Text('Widget'),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text('4', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                        SizedBox(height: 4),
-                        Text('Layout'),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text('1', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                        SizedBox(height: 4),
-                        Text('State'),
-                      ],
-                    ),
-                  ],
-                ),
+              const Text(
+                'Ringkasan Aktivitas',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+
+              // Memanggil Reusable Widget sebanyak 3x dengan data berbeda
+              Row(
+                children: [
+                  buildStatCard('8', 'Widget', Icons.widgets, Colors.indigo),
+                  buildStatCard('4', 'Layout', Icons.view_quilt, Colors.blue),
+                  buildStatCard('1', 'State', Icons.sync, Colors.orange),
+                ],
               ),
             ],
           ),
