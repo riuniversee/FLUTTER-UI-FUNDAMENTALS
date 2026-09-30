@@ -17,18 +17,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Collection List - Tahap 10'),
+          title: const Text('Informatif List - Tahap 11'),
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
         ),
-        body: const TopicListPage(),
+        body: const InformativeTopicListPage(),
       ),
     );
   }
 }
 
-class TopicListPage extends StatelessWidget {
-  const TopicListPage({super.key});
+class InformativeTopicListPage extends StatelessWidget {
+  const InformativeTopicListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,55 +40,90 @@ class TopicListPage extends StatelessWidget {
       {'title': '$studentId - $studentName', 'subtitle': 'Pemilik aplikasi', 'done': false},
     ];
 
+    // Menghitung jumlah topik yang sudah selesai menggunakan where()
+    final int completedCount = topics.where((item) => item['done'] == true).length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Identitas di Atas Daftar
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
+        // Card Ringkasan & Identitas Mahasiswa
+        Card(
+          margin: const EdgeInsets.all(16.0),
           color: Colors.indigo.shade50,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Identitas Pengembang:',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '$studentId - $studentName',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ],
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      studentName,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    Text(
+                      'NIM: $studentId',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                // Badge Ringkasan Progress
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '$completedCount dari ${topics.length} Selesai',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+
         const Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           child: Text(
-            'Daftar Topik Pembelajaran',
+            'Progres Topik Pembelajaran',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
 
-        // ListView.builder dibungkus Expanded
+        // List item dibungkus Card dengan Conditional UI
         Expanded(
           child: ListView.builder(
             itemCount: topics.length,
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             itemBuilder: (context, index) {
               final item = topics[index];
               final bool isDone = item['done'] == true;
 
-              return ListTile(
-                leading: Icon(
-                  isDone ? Icons.check_circle : Icons.circle_outlined,
-                  color: isDone ? Colors.green : Colors.grey,
+              return Card(
+                margin: const EdgeInsets.only(bottom: 10.0),
+                elevation: 1,
+                child: ListTile(
+                  leading: Icon(
+                    isDone ? Icons.check_circle : Icons.schedule,
+                    color: isDone ? Colors.green : Colors.orange,
+                  ),
+                  title: Text(
+                    item['title'] as String,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(item['subtitle'] as String),
+                  trailing: Text(
+                    isDone ? 'Selesai' : 'Belum',
+                    style: TextStyle(
+                      color: isDone ? Colors.green : Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                title: Text(
-                  item['title'] as String,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-                subtitle: Text(item['subtitle'] as String),
               );
             },
           ),
