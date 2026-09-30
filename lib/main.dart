@@ -17,101 +17,126 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Membaca JSON Statik - Tahap 12'),
-          backgroundColor: Colors.indigo,
-          foregroundColor: Colors.white,
-        ),
-        body: const JsonReaderTestPage(),
-      ),
+      home: const DashboardPage(),
     );
   }
 }
 
-class JsonReaderTestPage extends StatefulWidget {
-  const JsonReaderTestPage({super.key});
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
   @override
-  State<JsonReaderTestPage> createState() => _JsonReaderTestPageState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _JsonReaderTestPageState extends State<JsonReaderTestPage> {
-  String _jsonOutput = 'Menunggu pembacaan file JSON...';
+class _DashboardPageState extends State<DashboardPage> {
+  // Variabel late Future untuk menyimpan proses pembacaan JSON
+  late Future<Map<String, dynamic>> studentFuture;
 
-  // Function pembaca JSON statik dari assets
+  // Fungsi membaca file JSON statik dari assets
   Future<Map<String, dynamic>> loadStudentData() async {
     final String jsonString = await rootBundle.loadString('assets/data/student_data.json');
     return jsonDecode(jsonString) as Map<String, dynamic>;
   }
 
-  void _testReadJson() async {
-    try {
-      final data = await loadStudentData();
-      final student = data['student'] as Map<String, dynamic>;
-      final courses = data['courses'] as List<dynamic>;
-
-      setState(() {
-        _jsonOutput = 'Berhasil Membaca JSON!\n\n'
-            'NIM: ${student['nim']}\n'
-            'Nama: ${student['name']}\n'
-            'Jumlah Kursus: ${courses.length} item';
-      });
-    } catch (e) {
-      setState(() {
-        _jsonOutput = 'Gagal membaca JSON: $e';
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    // Menginisialisasi Future hanya satu kali di initState
+    studentFuture = loadStudentData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch, // Properti milik Column
-        children: [
-          Card(
-            color: Colors.indigo.shade50,
-            child: const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text(
-                    studentName,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text('NIM: $studentId', style: TextStyle(color: Colors.grey)),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Async FutureBuilder - Tahap 13'),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
+      ),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: studentFuture,
+        builder: (context, snapshot) {
+          // 1. State Loading / Menunggu Data
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // 2. State Error / Gagal Memuat Data
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Gagal memuat data: ${snapshot.error}',
+                style: const TextStyle(color: Colors.red),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton.icon(
-            onPressed: _testReadJson,
-            icon: const Icon(Icons.folder_open),
-            label: const Text('Uji Baca File JSON'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.indigo,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
+            );
+          }
+
+          // 3. State Data Siap (Success)
+          final data = snapshot.data!;
+          final student = data['student'] as Map<String, dynamic>;
+          final courses = data['courses'] as List<dynamic>;
+
+          return Column(
+            children: [
+              // Kartu Informasi Identitas dari Data JSON
+              Card(
+                margin: const EdgeInsets.all(16.0),
+                color: Colors.indigo.shade50,
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Colors.indigo,
+                    child: Icon(Icons.person, color: Colors.white),
+                  ),
+                  title: Text(
+                    student['name'] as String,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text('NIM: ${student['nim']}'),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    _jsonOutput,
-                    style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
+                    'Daftar Materi dari JSON Statik:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-            ),
-          ),
-        ],
+
+              // Rendering List Data Kursus
+              Expanded(
+                child: ListView.builder(
+                  itemCount: courses.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  itemBuilder: (context, index) {
+                    final course = courses[index] as Map<String, dynamic>;
+                    return Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.book, color: Colors.indigo),
+                        title: Text(
+                          course['title'] as String,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text('Kode: ${course['code']} • ${course['credits']} SKS'),
+                        trailing: Text(
+                          (course['status'] as String).toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.indigo,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
