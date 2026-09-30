@@ -17,72 +17,85 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Layout Row & Column - Tahap 6'),
+          title: const Text('Card & Styling - Tahap 7'),
           backgroundColor: Colors.indigo,
           foregroundColor: Colors.white,
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Identitas Mahasiswa
-                const Text(
-                  studentName,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // 1. Profil Mahasiswa menggunakan Card dan Padding
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const Text(
-                  'NIM: $studentId',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 24),
-
-                // Section Layout Bertingkat: Row berisi beberapa Column
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.indigo.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
                     children: [
-                      Column(
-                        children: [
-                          Text(
-                            '8',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
-                          ),
-                          SizedBox(height: 4),
-                          Text('Widget', style: TextStyle(color: Colors.black87)),
-                        ],
+                      Text(
+                        '$studentId - $studentName',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            '4',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
-                          ),
-                          SizedBox(height: 4),
-                          Text('Layout', style: TextStyle(color: Colors.black87)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            '1',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.indigo),
-                          ),
-                          SizedBox(height: 4),
-                          Text('State', style: TextStyle(color: Colors.black87)),
-                        ],
+                      SizedBox(height: 8),
+                      Text(
+                        'Flutter UI Fundamentals',
+                        style: TextStyle(fontSize: 14, color: Colors.indigo),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+
+              // 2. Elemen Ringkasan menggunakan Container + BoxDecoration
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.indigo.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.indigo.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      children: [
+                        Text('8', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        SizedBox(height: 4),
+                        Text('Widget'),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text('4', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        SizedBox(height: 4),
+                        Text('Layout'),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Text('1', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        SizedBox(height: 4),
+                        Text('State'),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
